@@ -6,10 +6,20 @@ import { CardListForm } from "./CardListForm";
 import { Lists } from "./Lists";
 import { BsThreeDots } from "react-icons/bs";
 import { CardInfo } from "./CardInfo";
+import { TiTick } from "react-icons/ti";
+import { useDispatch } from "react-redux";
+import { updateTitle } from "../../../store/slices/listsSlice";
 
 export const CardList = ({ card }) => {
   const [openListForm, setOpenListForm] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
+  const [openTitleUpdate, setOpenTitleUpdate] = useState(false);
+  const [newTitle, setNewTitle] = useState(card.title);
+  const dispatch = useDispatch();
+
+  const openUpdateTitleHandler = () => {
+    setOpenTitleUpdate(true);
+  };
 
   const openCloseInfo = () => {
     setOpenInfo((state) => !state);
@@ -18,11 +28,30 @@ export const CardList = ({ card }) => {
   const handleOpenAndCloseList = () => {
     setOpenListForm((state) => !state);
   };
+  const handleUpdateSubmit = (e) => {
+    e.preventDefault();
+    dispatch(updateTitle({ newTitle, cardId: card.id }));
+    setOpenTitleUpdate(false);
+  };
   return (
     <StyledCardList>
       <div>
-        <p>{card.title}</p>
-        <StyledDottedIcon cursor={"pointer"} onClick={openCloseInfo} />
+        {openTitleUpdate ? (
+          <StyledUpdateDiv>
+            <form onSubmit={handleUpdateSubmit}>
+              <input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+              />
+            </form>
+          </StyledUpdateDiv>
+        ) : (
+          <>
+            <p>{card.title}</p>
+            <StyledDottedIcon cursor={"pointer"} onClick={openCloseInfo} />
+          </>
+        )}
 
         {openInfo && (
           <>
@@ -30,6 +59,7 @@ export const CardList = ({ card }) => {
               onClose={openCloseInfo}
               id={card.id}
               onOpenListHandler={handleOpenAndCloseList}
+              onUpdateOpen={openUpdateTitleHandler}
             />
             <Backdrop onClick={openCloseInfo} />{" "}
           </>
@@ -39,7 +69,7 @@ export const CardList = ({ card }) => {
       {card.list.length > 0 && (
         <ul>
           {card.list.map((item) => (
-            <Lists key={item.id} {...item} />
+            <Lists key={item.id} {...item} cardId={card.id} />
           ))}
         </ul>
       )}
@@ -58,6 +88,22 @@ export const CardList = ({ card }) => {
     </StyledCardList>
   );
 };
+
+const StyledUpdateDiv = styled.div`
+  & > form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  & > form > input {
+    width: 100%;
+    height: 35px;
+    padding-left: 10px;
+    border-radius: 5px;
+    border: 1px solid gray;
+    font-size: 18px;
+  }
+`;
 
 const StyledCardList = styled.li`
   width: 200px;

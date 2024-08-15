@@ -3,9 +3,9 @@ import { RiCloseLargeLine } from "react-icons/ri";
 import styled from "styled-components";
 import { DeleteModal } from "./DeleteModal";
 import { useDispatch } from "react-redux";
-import { deleteCard } from "../../../store/slices/listsSlice";
+import { addCopyCard, deleteCard } from "../../../store/slices/listsSlice";
 
-export const CardInfo = ({ onClose, id, onOpenListHandler }) => {
+export const CardInfo = ({ onClose, id, onOpenListHandler, onUpdateOpen }) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const dispatch = useDispatch();
 
@@ -21,6 +21,15 @@ export const CardInfo = ({ onClose, id, onOpenListHandler }) => {
     onOpenListHandler();
     onClose();
   };
+  const updateTitleHandler = () => {
+    onUpdateOpen();
+    onClose();
+  };
+
+  const copyCardHandler = () => {
+    dispatch(addCopyCard(id));
+    onClose();
+  };
 
   return (
     <StyledCardInfo>
@@ -28,10 +37,10 @@ export const CardInfo = ({ onClose, id, onOpenListHandler }) => {
         <p>{}</p>
         <RiCloseLargeLine cursor={"pointer"} onClick={onClose} />
       </div>
+      <p onClick={updateTitleHandler}>Изменить описание</p>
       <p onClick={addListHandler}>Добавить карточку...</p>
       <p onClick={openCloseModalHandler}>Архивировать карточку</p>
-      <p>Подписаться</p>
-      <p>Создать правило</p>
+      <p onClick={copyCardHandler}>Создать копию</p>
       {openDeleteModal && (
         <DeleteModal
           onDelete={deleteCardHandler}
