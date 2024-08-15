@@ -44,8 +44,6 @@ const listsSlice = createSlice({
     },
     updateTitle: (state, action) => {
       const { newTitle, cardId } = action.payload;
-      console.log("cardId: ", cardId);
-      console.log("newTitle: ", newTitle);
       const card = state.card.find((item) => item.id === cardId);
       if (card) {
         card.title = newTitle;

@@ -59,7 +59,7 @@ export const SignIn = () => {
             </article>
             <article>
               <input
-                type="text"
+                type="password"
                 placeholder="Введите пароль "
                 {...register("password", {
                   required: {
