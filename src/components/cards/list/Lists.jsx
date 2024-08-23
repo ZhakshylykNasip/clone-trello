@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { updateList } from "../../../store/slices/listsSlice";
 
-export const Lists = ({ title, cardId, id }) => {
+export const Lists = ({ title, cardId, id, onUpdateTitle }) => {
   const [openUpdate, setOpenUpdate] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
-  const dispatch = useDispatch();
 
   const handleOpenList = () => {
     setOpenUpdate(true);
@@ -15,7 +12,14 @@ export const Lists = ({ title, cardId, id }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(updateList({ cardId, listId: id, newTitle }));
+    if (!newTitle.trim()) return null;
+
+    const updatedTitle = {
+      id,
+      title: newTitle,
+    };
+
+    onUpdateTitle({ cardId, updatedTitle });
 
     setOpenUpdate(false);
   };
@@ -51,6 +55,12 @@ const StyledList = styled.li`
   align-items: center;
   padding: 4px;
   border: 1px solid #bbbbbb;
+  height: fit-content;
+
+  & > p {
+    max-width: 150px;
+    overflow-wrap: break-word;
+  }
   & > form {
     width: 100%;
     & > input {

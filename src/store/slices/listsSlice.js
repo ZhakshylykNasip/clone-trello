@@ -1,36 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
+import {
+  deleteCardRequest,
+  getAllRequest,
+  patchCardTitleRequest,
+  patchListRequest,
+  patchListTitleRequest,
+  postCardsRequest,
+} from "../thunks/listsThunk";
 
 const listsSlice = createSlice({
   name: "lists",
   initialState: {
     card: [],
     isOpenCard: false,
+    isLoading: false,
   },
   reducers: {
-    addCard: (state, action) => {
-      state.card.push(action.payload);
-    },
-    addLists: (state, action) => {
-      const { listValue, id } = action.payload;
-
-      const existingCard = state.card.find((item) => item.id === id);
-      if (existingCard) {
-        const newListItem = {
-          id: Date.now(),
-          title: listValue,
-        };
-        existingCard.list.push(newListItem);
-      }
-    },
     handleOpenCard: (state) => {
       state.isOpenCard = true;
     },
     handleCloseCard: (state) => {
       state.isOpenCard = false;
     },
-    deleteCard: (state, action) => {
-      state.card = state.card.filter((item) => item.id !== action.payload);
-    },
+
     updateList: (state, action) => {
       const { cardId, listId, newTitle } = action.payload;
 
@@ -42,13 +34,7 @@ const listsSlice = createSlice({
         }
       }
     },
-    updateTitle: (state, action) => {
-      const { newTitle, cardId } = action.payload;
-      const card = state.card.find((item) => item.id === cardId);
-      if (card) {
-        card.title = newTitle;
-      }
-    },
+
     addCopyCard: (state, action) => {
       const originalCard = state.card.find(
         (item) => item.id === action.payload
@@ -67,14 +53,80 @@ const listsSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    //Get Request
+    builder
+      .addCase(getAllRequest.fulfilled, (state, action) => {
+        state.card = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(getAllRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllRequest.rejected, (state) => {
+        state.isLoading = false;
+      });
+    // Post Request
+    builder
+      .addCase(postCardsRequest.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(postCardsRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(postCardsRequest.rejected, (state) => {
+        state.isLoading = false;
+      });
+    // Delete Request
+    builder
+      .addCase(deleteCardRequest.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(deleteCardRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteCardRequest.rejected, (state) => {
+        state.isLoading = false;
+      });
+    // Update list Request
+    builder
+      .addCase(patchListRequest.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(patchListRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(patchListRequest.rejected, (state) => {
+        state.isLoading = false;
+      });
+    // Update Card title Request
+    builder
+      .addCase(patchCardTitleRequest.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(patchCardTitleRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(patchCardTitleRequest.rejected, (state) => {
+        state.isLoading = false;
+      });
+    // Update CardList title Request
+    builder
+      .addCase(patchListTitleRequest.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(patchListTitleRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(patchListTitleRequest.rejected, (state) => {
+        state.isLoading = false;
+      });
+  },
 });
 
 export const {
-  addCard,
-  addLists,
   handleOpenCard,
   handleCloseCard,
-  deleteCard,
   updateList,
   updateTitle,
   addCopyCard,
