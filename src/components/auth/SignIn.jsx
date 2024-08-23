@@ -5,8 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { signInRequest } from "../../store/thunks/authThunk";
-import { RingLoader } from "react-spinners";
 import { ErrorMessage } from "../UI/ErrorMessage";
+import { Loading } from "../UI/Loading";
 
 export const SignIn = () => {
   const dispatch = useDispatch();
@@ -22,16 +22,11 @@ export const SignIn = () => {
     if (userData) {
       userData.role = "ADMIN";
     }
-    console.log("userData: ", userData);
     dispatch(signInRequest({ userData, navigate }));
   };
   return (
     <>
-      {isLoading && (
-        <StyledLoader>
-          <RingLoader size={260} color="#064b84" />
-        </StyledLoader>
-      )}
+      {isLoading && <Loading />}
       <StyledContainer>
         <StyledLogoContainer>
           <img src={LogoImage} alt="" />
@@ -103,17 +98,7 @@ const StyledLogoContainer = styled.div`
     width: 80px;
   }
 `;
-const StyledLoader = styled.div`
-  width: 100%;
-  height: 100vh;
-  background-color: #808080ab;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+
 const StyledContainer = styled.div`
   width: 100%;
   height: 100vh;

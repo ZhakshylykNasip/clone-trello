@@ -3,7 +3,8 @@ import { RiCloseLargeLine } from "react-icons/ri";
 import styled from "styled-components";
 import { DeleteModal } from "./DeleteModal";
 import { useDispatch } from "react-redux";
-import { addCopyCard, deleteCard } from "../../../store/slices/listsSlice";
+import { addCopyCard } from "../../../store/slices/listsSlice";
+import { deleteCardRequest } from "../../../store/thunks/listsThunk";
 
 export const CardInfo = ({ onClose, id, onOpenListHandler, onUpdateOpen }) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -14,7 +15,8 @@ export const CardInfo = ({ onClose, id, onOpenListHandler, onUpdateOpen }) => {
   };
 
   const deleteCardHandler = () => {
-    dispatch(deleteCard(id));
+    dispatch(deleteCardRequest(id));
+    onClose();
   };
 
   const addListHandler = () => {

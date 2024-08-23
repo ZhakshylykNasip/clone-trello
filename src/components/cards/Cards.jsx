@@ -4,35 +4,46 @@ import { CardsForm } from "./CardsForm";
 import { useDispatch, useSelector } from "react-redux";
 import { CardList } from "./list/CardList";
 import { handleCloseCard, handleOpenCard } from "../../store/slices/listsSlice";
+import { useEffect } from "react";
+import { getAllRequest } from "../../store/thunks/listsThunk";
+import { Loading } from "../UI/Loading";
 
 export const Cards = () => {
   const dispatch = useDispatch();
-  const { card, isOpenCard } = useSelector((state) => state.lists);
+  const { card, isOpenCard, isLoading } = useSelector((state) => state.lists);
 
- 
+  useEffect(() => {
+    dispatch(getAllRequest());
+  }, []);
 
   const openFormCardHandler = () => {
     dispatch(handleOpenCard());
   };
+
   const closeFormCardHandler = () => {
     dispatch(handleCloseCard());
   };
 
   return (
-    <StyledContainer>
-      <CardListWrapper>
-        {card.map((item) => (
-          <CardList key={item.id} card={item} />
-        ))}
-      </CardListWrapper>
-      <div>{isOpenCard && <CardsForm onClose={closeFormCardHandler} />}</div>
-      <div>
-        <StyledButton onClick={openFormCardHandler}>
-          <FaPlus />{" "}
-          {card.length === 0 ? "Добавить список" : "Добавьте еще одну колонку"}
-        </StyledButton>
-      </div>
-    </StyledContainer>
+    <>
+      {isLoading && <Loading />}
+      <StyledContainer>
+        <CardListWrapper>
+          {card.map((item) => (
+            <CardList key={item.id} card={item} />
+          ))}
+        </CardListWrapper>
+        <div>{isOpenCard && <CardsForm onClose={closeFormCardHandler} />}</div>
+        <div>
+          <StyledButton onClick={openFormCardHandler}>
+            <FaPlus />{" "}
+            {card.length === 0
+              ? "Добавить список"
+              : "Добавьте еще одну колонку"}
+          </StyledButton>
+        </div>
+      </StyledContainer>
+    </>
   );
 };
 

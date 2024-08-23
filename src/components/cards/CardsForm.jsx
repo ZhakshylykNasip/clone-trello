@@ -1,9 +1,8 @@
-import React, { useState } from "react";
 import { RiCloseLargeLine } from "react-icons/ri";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { addCard } from "../../store/slices/listsSlice";
 import { useForm } from "react-hook-form";
+import { postCardsRequest } from "../../store/thunks/listsThunk";
 
 export const CardsForm = ({ onClose }) => {
   const dispatch = useDispatch();
@@ -20,7 +19,7 @@ export const CardsForm = ({ onClose }) => {
       data.list = [];
     }
 
-    dispatch(addCard(data));
+    dispatch(postCardsRequest(data));
     onClose();
   };
   return (

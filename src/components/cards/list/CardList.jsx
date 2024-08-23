@@ -6,9 +6,11 @@ import { CardListForm } from "./CardListForm";
 import { Lists } from "./Lists";
 import { BsThreeDots } from "react-icons/bs";
 import { CardInfo } from "./CardInfo";
-import { TiTick } from "react-icons/ti";
 import { useDispatch } from "react-redux";
-import { updateTitle } from "../../../store/slices/listsSlice";
+import {
+  patchCardTitleRequest,
+  patchListTitleRequest,
+} from "../../../store/thunks/listsThunk";
 
 export const CardList = ({ card }) => {
   const [openListForm, setOpenListForm] = useState(false);
@@ -30,9 +32,22 @@ export const CardList = ({ card }) => {
   };
   const handleUpdateSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateTitle({ newTitle, cardId: card.id }));
+
+    dispatch(patchCardTitleRequest({ title: newTitle, cardId: card.id }));
+
     setOpenTitleUpdate(false);
   };
+
+  const handleUpdateListTitle = ({ cardId, updatedTitle }) => {
+    const updatedList = card.list.map((item) =>
+      item.id === updatedTitle.id
+        ? { ...item, title: updatedTitle.title }
+        : item
+    );
+
+    dispatch(patchListTitleRequest({ id: cardId, list: updatedList }));
+  };
+
   return (
     <StyledCardList>
       <div>
@@ -69,13 +84,22 @@ export const CardList = ({ card }) => {
       {card.list.length > 0 && (
         <ul>
           {card.list.map((item) => (
-            <Lists key={item.id} {...item} cardId={card.id} />
+            <Lists
+              key={item.id}
+              {...item}
+              cardId={card.id}
+              onUpdateTitle={handleUpdateListTitle}
+            />
           ))}
         </ul>
       )}
 
       {openListForm ? (
-        <CardListForm onClose={handleOpenAndCloseList} id={card.id} />
+        <CardListForm
+          onClose={handleOpenAndCloseList}
+          id={card.id}
+          list={card.list}
+        />
       ) : (
         <section>
           <div onClick={handleOpenAndCloseList}>
@@ -131,6 +155,7 @@ const StyledCardList = styled.li`
     & > p {
       font-size: 18px;
       font-weight: 700;
+      overflow: hidden;
     }
   }
   & > section {

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { RiCloseLargeLine } from "react-icons/ri";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { addLists } from "../../../store/slices/listsSlice";
+import { patchListRequest } from "../../../store/thunks/listsThunk";
 
-export const CardListForm = ({ onClose, id }) => {
+export const CardListForm = ({ onClose, id, list }) => {
   const dispatch = useDispatch();
   const [listValue, setListValue] = useState("");
 
@@ -16,7 +16,14 @@ export const CardListForm = ({ onClose, id }) => {
     e.preventDefault();
     if (!listValue.trim()) return;
 
-    dispatch(addLists({ listValue, id }));
+    const newList = {
+      title: listValue,
+      id: Date.now(),
+    };
+
+    const updatedList = [...list, newList];
+
+    dispatch(patchListRequest({ list: updatedList, id }));
     onClose();
   };
   return (
