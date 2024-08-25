@@ -10,11 +10,13 @@ import { Loading } from "../UI/Loading";
 
 export const Cards = () => {
   const dispatch = useDispatch();
-  const { card, isOpenCard, isLoading } = useSelector((state) => state.lists);
+  const { card, isOpenCard, isLoading, filteredCard } = useSelector(
+    (state) => state.lists
+  );
 
   useEffect(() => {
     dispatch(getAllRequest());
-  }, []);
+  }, [dispatch]);
 
   const openFormCardHandler = () => {
     dispatch(handleOpenCard());
@@ -23,13 +25,14 @@ export const Cards = () => {
   const closeFormCardHandler = () => {
     dispatch(handleCloseCard());
   };
+  const cardToDisplay = filteredCard.length > 0 ? filteredCard : card;
 
   return (
     <>
       {isLoading && <Loading />}
       <StyledContainer>
         <CardListWrapper>
-          {card.map((item) => (
+          {cardToDisplay.map((item) => (
             <CardList key={item.id} card={item} />
           ))}
         </CardListWrapper>
