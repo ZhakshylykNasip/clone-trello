@@ -12,6 +12,7 @@ const listsSlice = createSlice({
   name: "lists",
   initialState: {
     card: [],
+    filteredCard: [],
     isOpenCard: false,
     isLoading: false,
   },
@@ -22,17 +23,8 @@ const listsSlice = createSlice({
     handleCloseCard: (state) => {
       state.isOpenCard = false;
     },
-
-    updateList: (state, action) => {
-      const { cardId, listId, newTitle } = action.payload;
-
-      const card = state.card.find((item) => item.id === cardId);
-      if (card) {
-        const listItem = card.list.find((item) => item.id === listId);
-        if (listItem) {
-          listItem.title = newTitle;
-        }
-      }
+    setFilteredCards: (state, action) => {
+      state.filteredCard = action.payload;
     },
 
     addCopyCard: (state, action) => {
@@ -127,8 +119,7 @@ const listsSlice = createSlice({
 export const {
   handleOpenCard,
   handleCloseCard,
-  updateList,
-  updateTitle,
   addCopyCard,
+  setFilteredCards,
 } = listsSlice.actions;
 export const listsReducer = listsSlice.reducer;

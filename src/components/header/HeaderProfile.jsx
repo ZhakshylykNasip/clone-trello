@@ -5,10 +5,15 @@ import { MdOutlineNotificationsActive } from "react-icons/md";
 import { TbLogout } from "react-icons/tb";
 import styled from "styled-components";
 import { ModalUI } from "../UI/ModalUI";
+import { useDispatch, useSelector } from "react-redux";
+import { setFilteredCards } from "../../store/slices/listsSlice";
 
 export const HeaderProfile = () => {
+  const dispatch = useDispatch();
   const [isOpenLogin, setIsOpenLogin] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [searchCard, setSearchCard] = useState("");
+  const { card } = useSelector((state) => state.lists);
 
   const toggleLoginVisibility = () => {
     setIsOpenLogin(!isOpenLogin);
@@ -21,6 +26,15 @@ export const HeaderProfile = () => {
     setIsOpenModal(!isOpenModal);
   };
 
+  const searchCardChange = (e) => {
+    const value = e.target.value;
+    setSearchCard(value);
+    const filteredCards = card.filter((card) =>
+      card.title.toLowerCase().includes(value.toLowerCase())
+    );
+    dispatch(setFilteredCards(filteredCards));
+  };
+
   const logOutHandler = () => {
     window.location.pathname = "/login";
     return localStorage.removeItem("auth");
@@ -28,7 +42,12 @@ export const HeaderProfile = () => {
 
   return (
     <StyledContainer>
-      <input type="text" placeholder="  Поиск" />
+      <input
+        type="text"
+        placeholder="  Поиск"
+        onChange={searchCardChange}
+        value={searchCard}
+      />
       <section>
         <MdOutlineNotificationsActive />
         <ImInfo />
